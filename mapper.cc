@@ -84,11 +84,13 @@ void map_string(string& src, int gramCount){
     }while(ss);
 
     //loop for each starting word
-    for(int i = 0; i < words.size() - gramCount - 1; i++){
+    for(int i = 0; i < words.size() - gramCount + 1; i++){
         string s;
         //loop to add all words
         for(int j = 0; j < gramCount; j++){
             s += words[i+j];
+            if(j != gramCount-1)
+                s += " ";
         }
         cout << s << "\t1" << endl;
     }
@@ -103,7 +105,6 @@ int main(int argc, char *argv[]){
     string str;
     while((str = get_next_tweet(cin)) != ""){
         map_string(str, gramCount);
-        //cout << str << endl;
     }
 
     return 0;
