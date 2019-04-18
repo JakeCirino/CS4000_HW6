@@ -13,6 +13,61 @@
 
 using namespace std;
 
+string remove_spaces(string& str){
+    size_t start_pos = 0;
+    while((start_pos = str.find(" ", start_pos)) != string::npos){
+        str.replace(start_pos, 1, "");
+        start_pos++;
+    }
+    return str;
+}
+
+string remove_doublequotes(string& str){
+    //remove doublequotes
+    size_t start_pos = 0;
+    while((start_pos = str.find("\"\"", start_pos)) != string::npos){
+        str.replace(start_pos, 2, "\"");
+        start_pos++;
+    }
+    return str;
+}
+
+string remove_hashtags(string& str){
+    //remove hashtags
+    size_t start_pos = 0;
+    while((start_pos = str.find("#", start_pos)) != string::npos){
+        //get word end
+        size_t word_end = str.find(" ", start_pos);
+
+        if(word_end == string::npos){
+            //end of word
+            str.replace(start_pos, str.size() - start_pos - 1, "");
+        }else{
+            //til word end
+            str.replace(start_pos, word_end - start_pos, "");
+        }
+        start_pos++;
+    }
+    return str;
+}
+
+string remove_links(string& str){
+    //remove links
+    size_t start_pos = 0;
+    while((start_pos = str.find("https://", start_pos)) != string::npos){
+        //get word end
+        size_t word_end = str.find(" ", start_pos);
+
+        if(word_end == string::npos){
+            str.replace(start_pos, str.size() - start_pos, "");
+        }else{
+            str.replace(start_pos, word_end - start_pos, "");
+        }
+        start_pos++;
+    }
+    return str;
+}
+
 /**
  * Gets the next tweet starting at index start
  */
@@ -62,12 +117,10 @@ string get_next_tweet(istream& in){
 
     string str = word;
 
-    //remove doublequotes
-    size_t start_pos = 0;
-    while((start_pos = str.find("\"\"", start_pos)) != string::npos){
-        str.replace(start_pos, 2, "\"");
-        start_pos += 1;
-    }
+    str = remove_doublequotes(str);
+    str = remove_hashtags(str);
+    str = remove_links(str);
+
     return str;
 }
 
@@ -80,7 +133,11 @@ void map_string(string& src, int gramCount){
         string word;
         ss >> word;
 
-        words.push_back(word);
+        if(word != " " && word != ""){
+            //remove spaces
+            word = remove_spaces(word);
+            words.push_back(word);
+        }
     }while(ss);
 
     //loop for each starting word

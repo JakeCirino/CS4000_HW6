@@ -28,7 +28,7 @@ int main(){
 
                 words.push_back(word);
             }while(ss);
-            cout << (words[2] == "\t") << endl;
+            //cout << (words[2] == "\t") << endl;
 
             //construct word
             string word;
