@@ -9,52 +9,55 @@
 #include <vector>
 #include <stdlib.h>
 #include <map>
+#include <set>
+#include <functional>
+#include <algorithm>
 
 using namespace std;
 
 int main(){
-    string line;
-    string old = "";
+    map<string, int> store;
+    string oldword = "";
     int count = 0;
+    string line;
     while(!cin.eof()){
         getline(cin, line);
-        if(!cin.fail()){
-            //get all words
-            vector<string> words;
-            istringstream ss(line);
-            do{
-                string word;
-                ss >> word;
 
-                words.push_back(word);
-            }while(ss);
-            //cout << (words[2] == "\t") << endl;
+        //get word
+        string word = line.substr(0, line.find("\t"));
+        if(oldword == ""){
+            oldword = word;
+        }
 
-            //construct word
-            string word;
-            for(int i = 0; i < words.size()-2; i++){
-                word += words[i];
-                if(i != words.size()-3)
-                    word += " ";
-            }
+        if(word == oldword){
+            count++;
+        }else{
+            //insert old element, reset count
+            store[oldword] = count;
+            count = 1;
 
-            if(old == ""){
-                old = word;
-            }
-
-            if(old != word){
-                cout << old << "\t" << count << endl;
-                old = word;
-                count = atoi(words[words.size()-2].c_str());
-            }else{
-                //cout << atoi(words[words.size()-1].c_str()) << endl;
-                count += atoi(words[words.size()-2].c_str());
-            }
+            //set oldworld to new word
+            oldword = word;
         }
     }
-    if(old != ""){
-        cout << old << "\t" << count << endl;
-    }
+
+    typedef function<bool(pair<string, int>, pair<string, int>)> Comparator;
+ 
+	// Defining a lambda function to compare two pairs. It will compare two pairs using second field
+	Comparator compFunctor =
+			[](std::pair<std::string, int> elem1 ,std::pair<std::string, int> elem2)
+			{
+				return elem1.second < elem2.second;
+			};
+ 
+	// Declaring a set that will store the pairs using above comparision logic
+	set<std::pair<string, int>, Comparator> setOfWords(
+			store.begin(), store.end(), compFunctor);
+ 
+	// Iterate over a set using range base for loop
+	// It will display the items in sorted order of values
+	for (std::pair<std::string, int> element : setOfWords)
+		std::cout << element.first << "\t" << element.second << std::endl;
 
     return 0;
 }
